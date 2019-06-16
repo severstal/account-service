@@ -5,16 +5,16 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
- * Application.
+ * Service.
  *
  * @author portnyagin
  */
 @SpringBootApplication
 @EnableScheduling
-public class Application {
+public class Service {
 
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        SpringApplication.run(Service.class, args);
     }
 
 }
