@@ -23,4 +23,8 @@ public class Account {
 
     private Long amount;
 
+    public void addAmount(Long amount) {
+        this.amount += amount;
+    }
+
 }

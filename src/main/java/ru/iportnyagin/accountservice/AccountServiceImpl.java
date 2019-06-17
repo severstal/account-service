@@ -3,12 +3,10 @@ package ru.iportnyagin.accountservice;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -27,7 +25,7 @@ public class AccountServiceImpl implements AccountService {
     private Statistic statistic;
 
     @Autowired
-    private AccountService accountService;
+    private AccountRepositoryServiceImpl repositoryService;
 
     private final Map<Integer, AmountHolder> cache = new ConcurrentHashMap<>();
 
@@ -63,47 +61,15 @@ public class AccountServiceImpl implements AccountService {
             log.debug("synchronized by holder:{}", holder);
 
             if (holder.isExists()) {
-                accountService.addToExist(id, addAmount, holder.getValue());
+                repositoryService.addToExist(id, addAmount, holder.getValue());
             } else {
-                accountService.createNew(id, addAmount);
+                repositoryService.createNew(id, addAmount);
                 holder.setExists(repository.existsById(id));
             }
 
-            holder.setValue(holder.getValue() + addAmount);
+            holder.addAmount(addAmount);
             log.debug("end synchronized by holder:{}", holder);
         }
-    }
-
-    @Override
-    @Transactional
-    public void createNew(Integer id, Long addAmount) {
-        Account account = new Account(id, addAmount);
-        repository.save(account);
-        log.debug("create account:{}", account);
-    }
-
-    @Override
-    @Transactional
-    public void addToExist(Integer id, Long addAmount, Long toCompare) {
-        log.debug("addToExist id:{} addAmount:{} toCompare{}", id, addAmount, toCompare);
-
-        Optional<Account> accountOpt = repository.findById(id);
-        if (!accountOpt.isPresent()) {
-            log.error("no data findById id:{}", id);
-            System.exit(1);
-        }
-
-        Account account = accountOpt.get();
-        Long dbAmount = account.getAmount();
-
-        if (toCompare != dbAmount.longValue()) {
-            log.error("db and cached value are different id:{} cached:{} db:{}", id, toCompare, dbAmount);
-            System.exit(1);
-        }
-
-        account.setAmount(dbAmount + addAmount);
-        repository.save(account);
-        log.debug("update account:{}", account);
     }
 
 }

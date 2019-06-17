@@ -21,4 +21,7 @@ public class AmountHolder {
     // for reduce db.existsById execute
     private boolean exists;
 
+    public void addAmount(Long amount) {
+        this.value += amount;
+    }
 }

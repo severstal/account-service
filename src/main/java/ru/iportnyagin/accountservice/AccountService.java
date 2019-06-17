@@ -22,7 +22,4 @@ public interface AccountService {
      */
     void addAmount(Integer id, Long value);
 
-    void createNew(Integer id, Long addAmount);
-
-    void addToExist(Integer id, Long addAmount, Long toCompare);
 }
