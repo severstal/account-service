@@ -36,7 +36,7 @@ main class for run service
 
 ## test client
 
-there is client for test accountService
+there is client for test accountService.
 client instances are run in concurrent threads
 
 main class for run client 
